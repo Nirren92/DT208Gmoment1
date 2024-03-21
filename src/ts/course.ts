@@ -62,9 +62,8 @@ class Course implements Courses {
     }
 }
 
-
+//globalavariabler
 let coursearray:Course[] = [];
-
 //Dom-event
 document.addEventListener("DOMContentLoaded",init);
 
@@ -80,7 +79,6 @@ const syllabusInput = document.getElementById("syllabus") as HTMLInputElement;
 let newCourse = new Course(codeInput.value,kursnamnInput.value,progressionInput.value as 'A'|'B'|'C',syllabusInput.value);
 
 addrowCourse(newCourse);
-    
 if(coursearray)
 {
     coursearray.push(newCourse);
@@ -89,7 +87,6 @@ else
 {
     coursearray = [newCourse];
 }
-
 storelocal();
 });
 
@@ -129,8 +126,6 @@ function addrowCourse(course:Course)
         row.appendChild(colsyllabus);
 
         tabell.appendChild(row);
-        //Lägger till objekt i array för lagring. Rad i tabell ska motsvara vart den ligger i array
-        
     }
     else
     {
@@ -146,8 +141,7 @@ function tabell_updated()
 
 function storelocal()
 {
-
-    //omvandlar till JSOM
+    //omvandlar till JSON
     const JsonString:string = JSON.stringify(coursearray);
     localStorage.setItem("Courses",JsonString);
 }
@@ -156,11 +150,9 @@ function init()
 {
     let JsonString:any = localStorage.getItem("Courses");
     let tempcoursearray:any = JSON.parse(JsonString);
-    console.log("objekts",coursearray);
-
+    //Måste skapa om JSON objekt till mina objekt. lägger till i array samt skapar rad samtidigt. 
     tempcoursearray.forEach(element => {
-        
-        let newCourse = new Course(element.code,element.name,element.progression as 'A'|'B'|'C',element.syllabus);
+        let newCourse:Course = new Course(element.code,element.name,element.progression as 'A'|'B'|'C',element.syllabus);
         coursearray.push(newCourse);        
         addrowCourse(newCourse);
     });

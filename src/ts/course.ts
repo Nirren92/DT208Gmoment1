@@ -1,6 +1,9 @@
 // KLass och iterface
 interface Courses{
-
+    Code;
+    Name;
+    Pression;
+    Syllabus;
 }
 
 // kör implements för att säkerställa att de följer varandra
@@ -42,12 +45,19 @@ class Course implements Courses {
     {
         this.progression = this.validateProgression(Progression);
     }
+  
     get Syllabus()
     {
-        return this.syllabus;
+        return this.name;
     }
+
+    set Syllabus(syllabus:string)
+    {
+        this.syllabus = syllabus;
+    }
+
     //Funktion som kontrollerar att värde är ok. 
-    private validateProgression(Progression:'A'|'B'|'C') 
+    private validateProgression(Progression:'A'|'B'|'C') :'A'|'B'|'C'
     {
         if(['A','B','C'].includes(Progression))
         {
@@ -71,10 +81,10 @@ const inputform = document.getElementById("inputform") as HTMLFormElement;
 //hämtar data från form
 inputform.addEventListener("submit",(event)=> {
 event.preventDefault();
-const codeInput = document.getElementById("code") as HTMLInputElement;
-const kursnamnInput = document.getElementById("kursnamn") as HTMLInputElement;
-const progressionInput = document.getElementById("progression") as HTMLInputElement;
-const syllabusInput = document.getElementById("syllabus") as HTMLInputElement;
+const codeInput:HTMLInputElement = document.getElementById("code") as HTMLInputElement;
+const kursnamnInput:HTMLInputElement = document.getElementById("kursnamn") as HTMLInputElement;
+const progressionInput:HTMLInputElement = document.getElementById("progression") as HTMLInputElement;
+const syllabusInput:HTMLInputElement = document.getElementById("syllabus") as HTMLInputElement;
 //skapar nytt objekt av klassen Course
 let newCourse = new Course(codeInput.value,kursnamnInput.value,progressionInput.value as 'A'|'B'|'C',syllabusInput.value);
 
@@ -96,35 +106,35 @@ function addrowCourse(course:Course)
 {
     //Hämtar tabell
     let tabell:any = document.getElementById("tabell")
-    console.log(course.Code+":datakommer")
     if(tabell)
     {
-        let row:any = document.createElement("tr");
-
-        let colKurskod:any = document.createElement("td");
+        //skapar rad   
+        let row:Element = document.createElement("tr");
+        //skapar cell och sätter värde. samt gör den editerbar
+        let colKurskod:Element = document.createElement("td");
         colKurskod.textContent = course.Code;
         colKurskod.setAttribute("contenteditable","true");
         colKurskod.addEventListener("input",tabell_updated);
         row.appendChild(colKurskod);
-
-        let colName:any = document.createElement("td");
+        //skapar cell och sätter värde. samt gör den editerbar
+        let colName:Element = document.createElement("td");
         colName.textContent = course.Name;
         colName.setAttribute("contenteditable","true");
         colName.addEventListener("input",tabell_updated);
         row.appendChild(colName);
-        
-        let colProgression:any = document.createElement("td");
+        //skapar cell och sätter värde. samt gör den editerbar
+        let colProgression:Element = document.createElement("td");
         colProgression.textContent = course.Pression;
         colProgression.setAttribute("contenteditable","true");
         colProgression.addEventListener("input",tabell_updated);
         row.appendChild(colProgression);
-        
-        let colsyllabus:any = document.createElement("td");
+        //skapar cell och sätter värde. samt gör den editerbar
+        let colsyllabus:Element = document.createElement("td");
         colsyllabus.textContent = course.Syllabus;
         colsyllabus.setAttribute("contenteditable","true");
         colsyllabus.addEventListener("input",tabell_updated);
         row.appendChild(colsyllabus);
-
+        //Skriver data till tabell. 
         tabell.appendChild(row);
     }
     else
@@ -133,9 +143,37 @@ function addrowCourse(course:Course)
     }
 }
 
-function tabell_updated()
+function tabell_updated(event:any)
 {
-    console.log("datauppdatera");
+    //Plockar ur cell från event. 
+    const cell:HTMLTableCellElement = event.target as HTMLTableCellElement;
+    //hämtar parent(dvs raden för cellen) fär att bestämma vilken rad cellen är på
+    const row:HTMLTableRowElement = cell.parentElement as HTMLTableRowElement;
+    //-1 eftersom rad index för tabell börjar på 1 och inte 0 som array sedan börjar på. 
+    const rownumber = row.rowIndex-1;
+    //kontrollerar vilken kolumn det är som är tryckt. skriver värde till objekt i array som hanterar objekten
+    if(cell.cellIndex==0)
+    {
+        coursearray[rownumber].Code = cell.innerText;
+    }
+    else if(cell.cellIndex==1)
+    {
+        coursearray[rownumber].Name = cell.innerText;
+    }
+    else if(cell.cellIndex==2)
+    {
+        coursearray[rownumber].Progression = cell.innerText as 'A'|'B'|'C';
+    }
+    else if(cell.cellIndex==3)
+    {
+        coursearray[rownumber].Syllabus = cell.innerText;
+    }
+    else
+    {
+        console.error("nåt har gått fel");
+    }
+
+    storelocal();
 }
 
 
@@ -143,6 +181,7 @@ function storelocal()
 {
     //omvandlar till JSON
     const JsonString:string = JSON.stringify(coursearray);
+    localStorage.clear();
     localStorage.setItem("Courses",JsonString);
 }
 

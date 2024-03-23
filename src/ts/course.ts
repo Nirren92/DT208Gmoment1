@@ -48,7 +48,7 @@ class Course implements Courses {
   
     get Syllabus()
     {
-        return this.name;
+        return this.syllabus;
     }
 
     set Syllabus(syllabus:string)
@@ -67,6 +67,7 @@ class Course implements Courses {
         {
             //SÄtter defaultvärde
             console.error('Fel värde på Progression, Ska vara A, B eller C');
+            alert("Du måste ange A,B eller C. Nu sätts Defaultvärde A")
             return'A';
         }   
     }
@@ -74,9 +75,24 @@ class Course implements Courses {
 
 //globalavariabler
 let coursearray:Course[] = [];
+let rownr:number =-1;
 //Dom-event
+
 document.addEventListener("DOMContentLoaded",init);
 
+const Rensa = document.getElementById("Rensa") as HTMLFormElement;
+
+
+
+const updatecellvalue = document.getElementById("tabell") as HTMLFormElement;
+//hämtar data från form
+updatecellvalue.addEventListener("click",cell_focus);
+
+
+
+
+//hämtar data från form
+Rensa.addEventListener("click",deleterow);
 const inputform = document.getElementById("inputform") as HTMLFormElement;
 //hämtar data från form
 inputform.addEventListener("submit",(event)=> {
@@ -143,6 +159,18 @@ function addrowCourse(course:Course)
     }
 }
 
+
+function cell_focus(event:any)
+{
+    const cell:HTMLTableCellElement = event.target as HTMLTableCellElement;
+    //hämtar parent(dvs raden för cellen) fär att bestämma vilken rad cellen är på
+    const row:HTMLTableRowElement = cell.parentElement as HTMLTableRowElement;
+    //-1 eftersom rad index för tabell börjar på 1 och inte 0 som array sedan börjar på. 
+    const rownumber = row.rowIndex-1;
+    rownr = rownumber;
+    console.log("siffra"+rownr);
+}
+
 function tabell_updated(event:any)
 {
     //Plockar ur cell från event. 
@@ -151,6 +179,7 @@ function tabell_updated(event:any)
     const row:HTMLTableRowElement = cell.parentElement as HTMLTableRowElement;
     //-1 eftersom rad index för tabell börjar på 1 och inte 0 som array sedan börjar på. 
     const rownumber = row.rowIndex-1;
+    
     //kontrollerar vilken kolumn det är som är tryckt. skriver värde till objekt i array som hanterar objekten
     if(cell.cellIndex==0)
     {
@@ -171,9 +200,29 @@ function tabell_updated(event:any)
     else
     {
         console.error("nåt har gått fel");
+        
     }
 
     storelocal();
+}
+
+
+function deleterow()
+{
+    //hämtar tabell
+    const table = document.getElementById("tabell");
+
+    const rows = table?.getElementsByTagName("tr");
+
+    //kontrollerar att de finns och inte är odefinerade samt lägger till 1 pågrund att tabell börjar på 1
+    if(table && rows && rownr >-1)
+    {
+    table?.removeChild(rows[rownr+1]);
+    coursearray.splice(rownr,1);
+    storelocal();
+    rownr = -1;
+    }
+    
 }
 
 
@@ -191,6 +240,7 @@ function init()
     let tempcoursearray:any = JSON.parse(JsonString);
     //Måste skapa om JSON objekt till mina objekt. lägger till i array samt skapar rad samtidigt. 
     tempcoursearray.forEach(element => {
+        console.log("länk"+element.syllabus);
         let newCourse:Course = new Course(element.code,element.name,element.progression as 'A'|'B'|'C',element.syllabus);
         coursearray.push(newCourse);        
         addrowCourse(newCourse);

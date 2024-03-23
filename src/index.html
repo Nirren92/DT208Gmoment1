@@ -8,8 +8,12 @@
     <script src="ts/course.ts" type="module"></script>
 <body>
 
-
-
+<div class="container">
+    <h1>Kurser</h1>
+    <p>Skriv in önskad kurs. För att editera markera direkt i tabell och skriv.
+        <Br>
+        Ändringar sparas direkt!
+    </p>
     <form id="inputform" action="">
         <label for="code">Kurskod</label>
         <input type="text" id="code" required>
@@ -23,7 +27,7 @@
         <label for="syllabus">Lånk/URL</label>
         <input type="text" id="syllabus" required>
         <br>
-        <button type="submit">Spara data</button>
+        <button type="submit">Lägg till data</button>
     </form>
     
 
@@ -35,6 +39,9 @@
             <th>Lånk/URL</th>
         </tr>
     </table>
-    
+    <button id="Rensa" >Ta bort markerad</button>
+
+</div>
+
 </body>
 </html>

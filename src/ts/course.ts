@@ -81,15 +81,9 @@ let rownr:number =-1;
 document.addEventListener("DOMContentLoaded",init);
 
 const Rensa = document.getElementById("Rensa") as HTMLFormElement;
-
-
-
+//vilken rad som varit i fokus
 const updatecellvalue = document.getElementById("tabell") as HTMLFormElement;
-//hämtar data från form
 updatecellvalue.addEventListener("click",cell_focus);
-
-
-
 
 //hämtar data från form
 Rensa.addEventListener("click",deleterow);
@@ -166,9 +160,8 @@ function cell_focus(event:any)
     //hämtar parent(dvs raden för cellen) fär att bestämma vilken rad cellen är på
     const row:HTMLTableRowElement = cell.parentElement as HTMLTableRowElement;
     //-1 eftersom rad index för tabell börjar på 1 och inte 0 som array sedan börjar på. 
-    const rownumber = row.rowIndex-1;
+    const rownumber:number = row.rowIndex-1;
     rownr = rownumber;
-    console.log("siffra"+rownr);
 }
 
 function tabell_updated(event:any)
@@ -211,15 +204,15 @@ function deleterow()
 {
     //hämtar tabell
     const table = document.getElementById("tabell");
-
     const rows = table?.getElementsByTagName("tr");
-
     //kontrollerar att de finns och inte är odefinerade samt lägger till 1 pågrund att tabell börjar på 1
     if(table && rows && rownr >-1)
     {
     table?.removeChild(rows[rownr+1]);
+    //tar bort objekt från array. 
     coursearray.splice(rownr,1);
     storelocal();
+    //sätter init på rownr då den berörda raden är borttagen. 
     rownr = -1;
     }
     
